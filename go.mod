@@ -1,4 +1,4 @@
-module common_go_utils
+module github.com/fabriceboyer/common_go_utils
 
 go 1.20
 

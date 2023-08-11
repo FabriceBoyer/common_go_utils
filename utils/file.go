@@ -91,7 +91,7 @@ func ReadFileInZip(zipPath string, targetFileName string) (string, error) {
 		}
 	}
 
-	return "", fmt.Errorf("file '%s' not found in zip: '%s'\n", targetFileName, zipPath)
+	return "", fmt.Errorf("file '%s' not found in zip: '%s'", targetFileName, zipPath)
 }
 
 // Returns first found
@@ -137,5 +137,5 @@ func ReadFileFromTarGz(tarGzFile, extension string) (string, error) {
 		}
 	}
 
-	return "", fmt.Errorf("file '%s' not found in tar.gz: '%s'\n", extension, tarGzFile)
+	return "", fmt.Errorf("file '%s' not found in tar.gz: '%s'", extension, tarGzFile)
 }
