@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/dustin/go-humanize v1.0.1
+	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.30.0
 	github.com/smacker/go-tree-sitter v0.0.0-20230720070738-0d0a9f78d8f8
 	github.com/spf13/viper v1.16.0

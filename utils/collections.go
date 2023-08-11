@@ -1,5 +1,10 @@
 package utils
 
+import (
+	"math/rand"
+	"time"
+)
+
 // order is not important
 func Remove[T interface{}](s []T, i int) []T {
 	s[i] = s[len(s)-1]
@@ -42,4 +47,13 @@ func InsertAt[T any](a []T, index int, value T) []T {
 		b[index] = value
 		return b
 	}
+}
+
+func GetRandomSample(s []string, n int) []string {
+	rand.Seed(time.Now().UnixNano())
+	if n > len(s) {
+		n = len(s) - 1
+	}
+	rand.Shuffle(len(s), func(i, j int) { s[i], s[j] = s[j], s[i] })
+	return s[:n]
 }
