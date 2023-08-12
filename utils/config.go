@@ -28,11 +28,11 @@ func SetupLogger(debug bool) error {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
 
-	log_file_name := "core.log"
-	err := os.Remove(log_file_name) // ignore error if file already exists
-	if err != nil {
-		return err
-	}
+	log_file_name := "output.log"
+	os.Remove(log_file_name)
+	//if err != nil {
+	// ignore error if file already exists
+	//}
 
 	file, err := os.OpenFile(log_file_name, os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
