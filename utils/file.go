@@ -27,7 +27,7 @@ func ReadJSON(filepath string, data any) error {
 }
 
 func WriteJSON(filePath string, data any) error {
-	err := os.MkdirAll(filepath.Dir(filePath), 0644)
+	err := os.MkdirAll(filepath.Dir(filePath), os.ModePerm)
 	if err != nil {
 		return err
 	}
