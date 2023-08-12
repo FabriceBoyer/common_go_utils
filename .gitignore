@@ -20,3 +20,5 @@ __debug*
 
 .env
 *.log
+
+test_output/
