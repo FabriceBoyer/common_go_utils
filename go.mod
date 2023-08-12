@@ -1,6 +1,6 @@
 module github.com/fabriceboyer/common_go_utils
 
-go 1.20
+go 1.21
 
 require (
 	github.com/dustin/go-humanize v1.0.1
