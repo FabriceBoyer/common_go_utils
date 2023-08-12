@@ -10,8 +10,8 @@ import (
 )
 
 func SetupConfig() error {
-	viper.AddConfigPath("..")
-	viper.AddConfigPath("../../") // for tests
+	viper.AddConfigPath(".")
+	viper.AddConfigPath("..") // for tests
 	viper.SetConfigName(".env")
 	viper.SetConfigType("env")
 	if err := viper.ReadInConfig(); err != nil {
@@ -29,7 +29,10 @@ func SetupLogger(debug bool) error {
 	}
 
 	log_file_name := "core.log"
-	os.Remove(log_file_name) // ignore error if file already exists
+	err := os.Remove(log_file_name) // ignore error if file already exists
+	if err != nil {
+		return err
+	}
 
 	file, err := os.OpenFile(log_file_name, os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
