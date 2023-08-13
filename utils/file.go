@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"archive/zip"
 	"compress/gzip"
+	"encoding/gob"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -138,4 +139,40 @@ func ReadFileFromTarGz(tarGzFile, extension string) (string, error) {
 	}
 
 	return "", fmt.Errorf("file '%s' not found in tar.gz: '%s'", extension, tarGzFile)
+}
+
+func SaveGob(data interface{}, filename string) error {
+
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	encoder := gob.NewEncoder(file)
+
+	err = encoder.Encode(data)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func LoadGob(filename string, data interface{}) error {
+
+	file, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	decoder := gob.NewDecoder(file)
+
+	err = decoder.Decode(data)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -84,4 +85,40 @@ func TestReadFileFromTarGz(t *testing.T) {
 	}
 
 	t.Log("File Contents:", string(fileContents), "\n")
+}
+
+type TestData struct {
+	Name  string
+	Age   int
+	Email string
+}
+
+func TestSaveLoadGob(t *testing.T) {
+	testFile := "test_output/file/test.gob"
+
+	// Create a test data struct
+	testData := TestData{
+		Name:  "John Doe",
+		Age:   30,
+		Email: "johndoe@example.com",
+	}
+
+	// Serialize the test data to the file
+	err := SaveGob(&testData, testFile)
+	if err != nil {
+		t.Fatalf("Error serializing data: %v", err)
+	}
+
+	// Deserialize the test data from the file
+	var loadedData TestData
+	err = LoadGob(testFile, &loadedData)
+	if err != nil {
+		t.Fatalf("Error deserializing data: %v", err)
+	}
+
+	// Compare the original and loaded data
+	if !reflect.DeepEqual(testData, loadedData) {
+		t.Errorf("Loaded data does not match the original data")
+	}
+
 }
