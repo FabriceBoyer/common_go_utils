@@ -149,7 +149,10 @@ func SaveGob(data interface{}, filename string) error {
 	}
 	defer file.Close()
 
-	encoder := gob.NewEncoder(file)
+	gzipWriter := gzip.NewWriter(file)
+	defer gzipWriter.Close()
+
+	encoder := gob.NewEncoder(gzipWriter)
 
 	err = encoder.Encode(data)
 	if err != nil {
@@ -167,7 +170,13 @@ func LoadGob(filename string, data interface{}) error {
 	}
 	defer file.Close()
 
-	decoder := gob.NewDecoder(file)
+	gzipReader, err := gzip.NewReader(file)
+	if err != nil {
+		return err
+	}
+	defer gzipReader.Close()
+
+	decoder := gob.NewDecoder(gzipReader)
 
 	err = decoder.Decode(data)
 	if err != nil {
