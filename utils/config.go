@@ -21,14 +21,13 @@ func SetupConfig() error {
 	return nil
 }
 
-func SetupLogger(debug bool) error {
+func SetupLogger(debug bool, log_file_name string) error {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	if debug {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
 
-	log_file_name := "output.log"
 	os.Remove(log_file_name)
 	//if err != nil {
 	// ignore error if file already exists
@@ -40,7 +39,7 @@ func SetupLogger(debug bool) error {
 	}
 
 	log.Logger = zerolog.New(file).With().Logger()
-	log.Info().Msg("Starting core")
+	log.Info().Msgf("Starting log '%s'", log_file_name)
 
 	return nil
 }

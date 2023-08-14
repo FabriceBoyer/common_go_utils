@@ -10,7 +10,7 @@ import "testing"
 // }
 
 func TestSetupLogger(t *testing.T) {
-	err := SetupLogger(true)
+	err := SetupLogger(true, "test.log")
 	if err != nil {
 		t.Error(err)
 	}
