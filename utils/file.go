@@ -141,7 +141,7 @@ func ReadFileFromTarGz(tarGzFile, extension string) (string, error) {
 	return "", fmt.Errorf("file '%s' not found in tar.gz: '%s'", extension, tarGzFile)
 }
 
-func SaveGob(data interface{}, filename string) error {
+func SaveGob(data any, filename string) error {
 
 	file, err := os.Create(filename)
 	if err != nil {
@@ -162,7 +162,7 @@ func SaveGob(data interface{}, filename string) error {
 	return nil
 }
 
-func LoadGob(filename string, data interface{}) error {
+func LoadGob(filename string, data any) error {
 
 	file, err := os.Open(filename)
 	if err != nil {
