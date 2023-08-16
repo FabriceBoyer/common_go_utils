@@ -3,6 +3,7 @@ package utils
 import (
 	"archive/tar"
 	"archive/zip"
+	"bufio"
 	"compress/gzip"
 	"encoding/gob"
 	"encoding/json"
@@ -179,6 +180,34 @@ func LoadGob(filename string, data any) error {
 	decoder := gob.NewDecoder(gzipReader)
 
 	err = decoder.Decode(data)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func WriteStringArrayToFile(strArray []string, filename string) error {
+	// Create a new file
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	// Create a buffered writer to write to the file
+	writer := bufio.NewWriter(file)
+
+	// Write each string in the array to the file
+	for _, str := range strArray {
+		_, err := writer.WriteString(str + "\n")
+		if err != nil {
+			return err
+		}
+	}
+
+	// Flush the buffer to ensure all data is written
+	err = writer.Flush()
 	if err != nil {
 		return err
 	}

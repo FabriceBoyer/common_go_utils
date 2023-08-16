@@ -1,9 +1,14 @@
 package utils
 
 import (
+	"os"
 	"reflect"
 	"testing"
 )
+
+func TestMain(m *testing.M) {
+	os.MkdirAll("test_output", os.ModePerm)
+}
 
 type JSONData struct {
 	Data string `json:"data"`
@@ -119,6 +124,35 @@ func TestSaveLoadGob(t *testing.T) {
 	// Compare the original and loaded data
 	if !reflect.DeepEqual(testData, loadedData) {
 		t.Errorf("Loaded data does not match the original data")
+	}
+
+}
+
+func TestWriteStringArrayToFile(t *testing.T) {
+	// Example string array
+	strArray := []string{"Hello", "World", "Knowledge"}
+
+	// Temporary test file
+	tmpFile := "test_output/file/string_array.txt"
+
+	// Call the function to write the string array to a file
+	err := WriteStringArrayToFile(strArray, tmpFile)
+	if err != nil {
+		t.Fatalf("Failed to write string array to file: %v", err)
+	}
+
+	// Read the contents of the test file
+	fileData, err := os.ReadFile(tmpFile)
+	if err != nil {
+		t.Fatalf("Failed to read test file: %v", err)
+	}
+
+	// Expected file contents
+	expectedData := "Hello\nWorld\nKnowledge\n"
+
+	// Check if the file contents match the expected data
+	if !reflect.DeepEqual(string(fileData), expectedData) {
+		t.Errorf("Unexpected file contents.\nExpected: %s\nActual: %s", expectedData, fileData)
 	}
 
 }
