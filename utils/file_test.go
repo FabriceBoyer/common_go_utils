@@ -6,9 +6,9 @@ import (
 	"testing"
 )
 
-func TestMain(m *testing.M) {
-	os.MkdirAll("test_output", os.ModePerm)
-}
+// func TestMain(m *testing.M) {
+// 	os.MkdirAll("test_output", os.ModePerm)
+// }
 
 type JSONData struct {
 	Data string `json:"data"`
@@ -16,8 +16,10 @@ type JSONData struct {
 
 func TestJSON(t *testing.T) {
 	type args struct {
-		filepath string
-		data     *JSONData
+		filepath    string
+		data        *JSONData
+		prettyPrint bool
+		compressed  bool
 	}
 	tests := []struct {
 		name    string
@@ -27,15 +29,27 @@ func TestJSON(t *testing.T) {
 		{
 			name: "TestJSON",
 			args: args{
-				filepath: "test_output/file/test.json",
-				data:     &JSONData{"Test"},
+				filepath:    "test_output/file/test.json",
+				data:        &JSONData{"Test"},
+				prettyPrint: false,
+				compressed:  false,
+			},
+			wantErr: false,
+		},
+		{
+			name: "Test Gz JSON ",
+			args: args{
+				filepath:    "test_output/file/test.json.gz",
+				data:        &JSONData{"Test"},
+				prettyPrint: true,
+				compressed:  true,
 			},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := WriteJSON(tt.args.filepath, tt.args.data); (err != nil) != tt.wantErr {
+			if err := WriteJSON(tt.args.filepath, tt.args.data, tt.args.prettyPrint, tt.args.compressed); (err != nil) != tt.wantErr {
 				t.Errorf("WriteJSON() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			if err := ReadJSON(tt.args.filepath, tt.args.data); (err != nil) != tt.wantErr {
@@ -155,4 +169,48 @@ func TestWriteStringArrayToFile(t *testing.T) {
 		t.Errorf("Unexpected file contents.\nExpected: %s\nActual: %s", expectedData, fileData)
 	}
 
+}
+
+func TestAddExtensionIfNotExist(t *testing.T) {
+	type args struct {
+		filePath  string
+		extension string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "Already exists",
+			args: args{
+				filePath:  "test_output/file/test.txt",
+				extension: ".txt",
+			},
+			want: "test_output/file/test.txt",
+		},
+		{
+			name: "Missing first extension",
+			args: args{
+				filePath:  "test_output/file/test",
+				extension: ".txt",
+			},
+			want: "test_output/file/test.txt",
+		},
+		{
+			name: "Missing second extension",
+			args: args{
+				filePath:  "test_output/file/test.txt",
+				extension: ".gz",
+			},
+			want: "test_output/file/test.txt.gz",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := AddExtensionIfNotExist(tt.args.filePath, tt.args.extension); got != tt.want {
+				t.Errorf("AddExtensionIfNotExist() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

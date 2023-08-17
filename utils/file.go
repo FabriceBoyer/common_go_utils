@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"archive/zip"
 	"bufio"
+	"bytes"
 	"compress/gzip"
 	"encoding/gob"
 	"encoding/json"
@@ -14,45 +15,116 @@ import (
 	"strings"
 )
 
-func ReadJSON(filepath string, data any) error {
-	file, err := os.ReadFile(filepath)
-	if err != nil {
-		return err
-	}
+func ReadJSON(filename string, data any) error {
 
-	err = json.Unmarshal(file, data)
-	if err != nil {
-		return err
+	compressed := strings.HasSuffix(filename, ".gz")
+
+	if compressed {
+		// Open the gzip file for reading
+		file, err := os.Open(filename)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+
+		// Create a gzip reader on top of the file
+		gzipReader, err := gzip.NewReader(file)
+		if err != nil {
+			return err
+		}
+		defer gzipReader.Close()
+
+		// Create a JSON decoder on top of the gzip reader
+		jsonDecoder := json.NewDecoder(gzipReader)
+
+		// Decode the JSON data into the provided data structure
+		err = jsonDecoder.Decode(data)
+		if err != nil {
+			return err
+		}
+
+	} else {
+
+		file, err := os.ReadFile(filename)
+		if err != nil {
+			return err
+		}
+
+		err = json.Unmarshal(file, data)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
-// TODO add GZIP option
-// TODO add option for MarshalIndent
-func WriteJSON(filePath string, data any) error {
+func WriteJSON(filePath string, data any, prettyPrint bool, compress bool) error {
+
 	err := os.MkdirAll(filepath.Dir(filePath), os.ModePerm)
 	if err != nil {
 		return err
 	}
 
-	jsonFile, err := os.Create(filePath + ".json")
+	extension := ".json"
+	if compress {
+		extension += ".gz"
+	}
+
+	jsonFile, err := os.Create(AddExtensionIfNotExist(filePath, extension))
 	if err != nil {
 		return err
 	}
 	defer jsonFile.Close()
 
-	byteValue, err := json.MarshalIndent(data, "", " ")
+	// Convert the data to JSON
+	var jsonData []byte
+	if prettyPrint {
+		jsonData, err = json.MarshalIndent(data, "", " ")
+	} else {
+		jsonData, err = json.Marshal(data)
+	}
 	if err != nil {
 		return err
 	}
 
-	_, err = jsonFile.Write(byteValue)
-	if err != nil {
-		return err
+	if compress {
+		// Create a buffer to store the compressed data
+		var compressedData bytes.Buffer
+
+		// Create a gzip writer on top of the buffer
+		gzipWriter := gzip.NewWriter(&compressedData)
+		defer gzipWriter.Close()
+
+		// Write the JSON data to the gzip writer
+		_, err = gzipWriter.Write(jsonData)
+		if err != nil {
+			return err
+		}
+		gzipWriter.Flush()
+
+		_, err = jsonFile.Write(compressedData.Bytes())
+		if err != nil {
+			return err
+		}
+
+	} else {
+		_, err = jsonFile.Write(jsonData)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
+}
+
+func AddExtensionIfNotExist(filePath string, extension string) string {
+	// Check if the file path already has an extension
+	if !strings.HasSuffix(filePath, extension) {
+		// Add the extension to the file path
+		filePath += extension
+	}
+	return filePath
 }
 
 func FileExists(filename string) bool {
