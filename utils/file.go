@@ -20,6 +20,7 @@ func ReadJSON(filename string, data any) error {
 	compressed := strings.HasSuffix(filename, ".gz")
 
 	if compressed {
+
 		// Open the gzip file for reading
 		file, err := os.Open(filename)
 		if err != nil {
