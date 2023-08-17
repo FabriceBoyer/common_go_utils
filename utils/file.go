@@ -28,13 +28,15 @@ func ReadJSON(filepath string, data any) error {
 	return nil
 }
 
+// TODO add GZIP option
+// TODO add option for MarshalIndent
 func WriteJSON(filePath string, data any) error {
 	err := os.MkdirAll(filepath.Dir(filePath), os.ModePerm)
 	if err != nil {
 		return err
 	}
 
-	jsonFile, err := os.Create(filePath)
+	jsonFile, err := os.Create(filePath + ".json")
 	if err != nil {
 		return err
 	}
