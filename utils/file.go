@@ -90,19 +90,15 @@ func WriteJSON(filePath string, data any, prettyPrint bool, compress bool) error
 	}
 
 	if compress {
-		// Create a buffer to store the compressed data
 		var compressedData bytes.Buffer
 
 		// Create a gzip writer on top of the buffer
 		gzipWriter := gzip.NewWriter(&compressedData)
-		defer gzipWriter.Close()
-
-		// Write the JSON data to the gzip writer
 		_, err = gzipWriter.Write(jsonData)
 		if err != nil {
 			return err
 		}
-		gzipWriter.Flush()
+		gzipWriter.Close() // must close it now, not defer it
 
 		_, err = jsonFile.Write(compressedData.Bytes())
 		if err != nil {
