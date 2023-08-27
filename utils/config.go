@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/rs/zerolog"
@@ -22,7 +23,7 @@ func SetupConfig() error {
 }
 
 func SetupLogger(debug bool, log_file_name string) error {
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	if debug {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
@@ -37,8 +38,12 @@ func SetupLogger(debug bool, log_file_name string) error {
 	if err != nil {
 		return err
 	}
+	fileLogger := zerolog.New(file).With().Timestamp().Logger()
 
-	log.Logger = zerolog.New(file).With().Logger()
+	consoleLogger := zerolog.ConsoleWriter{Out: os.Stdout}
+	writers := io.MultiWriter(consoleLogger, fileLogger)
+	log.Logger = log.Output(writers)
+
 	log.Info().Msgf("Starting log '%s'", log_file_name)
 
 	return nil
