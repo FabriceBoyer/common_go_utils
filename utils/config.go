@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -40,7 +41,19 @@ func SetupLogger(debug bool, log_file_name string) error {
 	}
 	fileLogger := zerolog.New(file).With().Timestamp().Logger()
 
-	consoleLogger := zerolog.ConsoleWriter{Out: os.Stdout}
+	consoleLogger := zerolog.ConsoleWriter{Out: os.Stdout,
+		FormatLevel: func(i interface{}) string {
+			return strings.ToUpper(fmt.Sprintf("[%s]", i))
+		},
+		FormatMessage: func(i interface{}) string {
+			return fmt.Sprintf("| %s |", i)
+		},
+		// FormatCaller: func(i interface{}) string {
+		// 	return filepath.Base(fmt.Sprintf("%s", i))
+		// },
+		PartsExclude: []string{
+			zerolog.TimestampFieldName,
+		}}
 	writers := io.MultiWriter(consoleLogger, fileLogger)
 	log.Logger = log.Output(writers)
 
