@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-func DownloadFile(filepath string, url string) error {
+func DownloadFile(filePath string, url string) error {
 
 	// Get the data
 	resp, err := http.Get(url)
@@ -21,8 +21,13 @@ func DownloadFile(filepath string, url string) error {
 		return fmt.Errorf("bad status: %s for url '%s'", resp.Status, url)
 	}
 
+	err = EnsureFolderExistForFile(filePath)
+	if err != nil {
+		return err
+	}
+
 	// Create the file
-	out, err := os.Create(filepath)
+	out, err := os.Create(filePath)
 	if err != nil {
 		return err
 	}

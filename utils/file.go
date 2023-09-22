@@ -132,6 +132,14 @@ func FileExists(filename string) bool {
 	return !info.IsDir()
 }
 
+func EnsureFolderExistForFile(filePath string) error {
+	err := os.MkdirAll(filepath.Dir(filePath), os.ModePerm)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func ReadFileInZip(zipPath string, targetFileName string) (string, error) {
 	// Open the zip file for reading
 	zipFile, err := zip.OpenReader(zipPath)
