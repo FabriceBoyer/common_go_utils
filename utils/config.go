@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/rs/zerolog"
@@ -12,12 +13,16 @@ import (
 )
 
 func SetupConfig() error {
-	viper.AddConfigPath(".")
-	viper.AddConfigPath("..") // for tests
+	return SetupConfigPath(".")
+}
+
+func SetupConfigPath(rootPath string) error {
+	viper.AddConfigPath(rootPath)
+	viper.AddConfigPath(filepath.Join(rootPath, "..")) // for tests
 	viper.SetConfigName(".env")
 	viper.SetConfigType("env")
 	if err := viper.ReadInConfig(); err != nil {
-		log.Error().Msg(fmt.Sprint("Error reading env file", err))
+		log.Error().Msg(fmt.Sprint("Error reading env file in ", rootPath, err))
 		return err
 	}
 	return nil
