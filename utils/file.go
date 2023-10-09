@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 )
@@ -124,6 +125,13 @@ func AddExtensionIfNotExist(filePath string, extension string) string {
 	return filePath
 }
 
+func RemoveExtension(filePath string) string {
+	fileName := path.Base(filePath)
+	fileExt := path.Ext(fileName)
+	fileNameWithoutExt := fileName[:len(fileName)-len(fileExt)]
+	return fileNameWithoutExt
+}
+
 func FileExists(filename string) bool {
 	info, err := os.Stat(filename)
 	if os.IsNotExist(err) {
@@ -151,7 +159,7 @@ func ReadFileInZip(zipPath string, targetFileName string) (string, error) {
 	// Iterate through each file in the zip archive
 	for _, file := range zipFile.File {
 		// Check if the file name matches the target file name
-		if file.Name == targetFileName {
+		if path.Base(file.Name) == path.Base(targetFileName) {
 			// Open the file inside the archive
 			zipFile, err := file.Open()
 			if err != nil {
