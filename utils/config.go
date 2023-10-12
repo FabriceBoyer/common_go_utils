@@ -17,13 +17,13 @@ func SetupConfig() error {
 }
 
 func SetupConfigPath(rootPath string) error {
-	viper.AddConfigPath(rootPath)
-	viper.AddConfigPath(filepath.Join(rootPath, "..")) // for tests
-	viper.SetConfigName(".env")
+	viper.SetConfigFile(filepath.Join(rootPath, ".env"))
 	viper.SetConfigType("env")
-	if err := viper.ReadInConfig(); err != nil {
+	if err := viper.MergeInConfig(); err != nil {
 		log.Error().Msg(fmt.Sprint("Error reading env file in ", rootPath, err))
 		return err
+	} else {
+		log.Debug().Msgf("Loaded env file in %s", rootPath)
 	}
 	return nil
 }
