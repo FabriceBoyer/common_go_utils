@@ -12,8 +12,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-func SetupConfig() error {
-	return SetupConfigPath(".")
+func SetupTestConfig() error {
+	return SetupConfigPath("..")
 }
 
 func SetupConfigPath(rootPath string) error {
@@ -22,8 +22,6 @@ func SetupConfigPath(rootPath string) error {
 	if err := viper.MergeInConfig(); err != nil {
 		log.Error().Msg(fmt.Sprint("Error reading env file in ", rootPath, err))
 		return err
-	} else {
-		log.Debug().Msgf("Loaded env file in %s", rootPath)
 	}
 	return nil
 }
