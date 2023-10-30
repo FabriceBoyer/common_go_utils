@@ -9,6 +9,15 @@ import (
 	"os"
 )
 
+type GenericWebClient struct {
+	Hostname string
+	Port     int
+}
+
+func (c *GenericWebClient) GetUrl(url string) string {
+	return fmt.Sprintf("http://%s:%d/", c.Hostname, c.Port)
+}
+
 func DownloadFile(filePath string, url string) error {
 
 	// Get the data
