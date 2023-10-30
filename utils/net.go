@@ -15,7 +15,7 @@ type GenericWebClient struct {
 }
 
 func (c *GenericWebClient) GetUrl(url string) string {
-	return fmt.Sprintf("http://%s:%d/", c.Hostname, c.Port)
+	return fmt.Sprintf("http://%s:%d/%s", c.Hostname, c.Port, url)
 }
 
 func DownloadFile(filePath string, url string) error {
