@@ -12,7 +12,7 @@ func TestMinInt(t *testing.T) {
 }
 
 func TestMaxInt(t *testing.T) {
-	assert.Equal(t, Max(5, 2), 5, "Maw should be 5")
+	assert.Equal(t, Max(5, 2), 5, "Max should be 5")
 }
 
 func TestClamp(t *testing.T) {
