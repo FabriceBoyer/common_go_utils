@@ -26,19 +26,19 @@ func SetupConfigPath(rootPath string) error {
 	return nil
 }
 
-func SetupLogger(debug bool, log_file_name string) error {
+func SetupLogger(debug bool, logFileName string) error {
 
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	if debug {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
 
-	os.Remove(log_file_name)
+	os.Remove(logFileName)
 	//if err != nil {
 	// ignore error if file already exists
 	//}
 
-	file, err := os.OpenFile(log_file_name, os.O_CREATE|os.O_WRONLY, 0666)
+	file, err := os.OpenFile(logFileName, os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		return err
 	}
@@ -60,7 +60,7 @@ func SetupLogger(debug bool, log_file_name string) error {
 	writers := io.MultiWriter(consoleLogger, fileLogger)
 	log.Logger = log.Output(writers)
 
-	log.Info().Msgf("Starting log '%s'", log_file_name)
+	log.Info().Msgf("Starting log '%s'", logFileName)
 
 	return nil
 }
